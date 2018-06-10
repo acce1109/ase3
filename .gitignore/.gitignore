@@ -1,0 +1,63 @@
+from numpy import genfromtxt
+import matplotlib.pyplot as plt
+import random
+
+file = genfromtxt('data1.csv',delimiter='|')
+file2 = genfromtxt('data2.csv',delimiter='|')
+
+x1=[]
+x2=[]
+y1=[]
+y2=[]
+
+for i in file:
+    x1.append(i[0])
+    y1.append(i[1])
+for j in file2:
+    x2.append(j[0])
+    y2.append(j[1])
+
+priori=len(x1)/(len(x1)+len(x2))
+priori2=len(x1)/(len(x1)+len(x2))
+
+x3=random.uniform(0.5, 2.5)
+y3=random.uniform(2,6)
+
+pkt1 =0
+pkt2 = 0
+n=1
+while((pkt1+pkt2)==0):
+    pkt1=0
+    pkt2=0
+    for i in range (len(file)):
+        if((abs((x3-x1[i])**2+(y3-y1[i])**2))<=n*n):
+            pkt1+=1
+
+    for i in range(len(file2)):
+        if ((abs((x3 - x2[i]) ** 2 + (y3 - y2[i]) ** 2)) <= n * n):
+            pkt1 += 1
+
+    if ((pkt1 + pkt2) == 0):
+        n += 0.1
+
+posteriori1=pkt1/len(file)
+posteriori2=pkt2/len(file2)
+
+probability1=priori*posteriori1
+probability2=priori2*posteriori2
+
+
+print("Red probability:",round(probability1,3),"(a priori:",round(priori,3),'a posteriori:',round(posteriori1,3),")")
+print("Green probability:",round(probability2,3),"(a priori:",round(priori2,3),'a posteriori:',round(posteriori2,3),")")
+fig,ax=plt.subplots()
+plt.plot(x1, y1, 'ro',color='red')
+plt.plot(x2, y2, 'ro',color='green')
+if (probability1>probability2):
+    plt.plot(x3, y3, 's',color='red')
+else:
+    plt.plot(x3, y3, 's', color='green')
+circle = plt.Circle((x3, y3), radius=n, color='black',fill=False)
+ax.add_artist(circle)
+
+
+plt.show()
